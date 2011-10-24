@@ -1,0 +1,52 @@
+VirtualBox Unity Lens Daemon written in Python
+-----------------------------------------------
+
+Credits
+-------
+This lens is based on the gdocs sample lens writen by njpatel which can 
+be found on launchpad.
+http://bazaar.launchpad.net/~njpatel/unity-lens-gdocs/trunk/files
+
+Most of this code is copy paste
+
+Dependencies
+------------
+Introspection data for libunity, libdee, and libdbusmenu-glib
+
+gir1.2-unity-4.0
+gir1.2-dee-0.5
+gir1.2-dbusmenu-glib-0.4
+
+Trying out the lens
+-------------------
+
+There is no installation script for this so to get Unity to pick
+this up you need to:
+
+  sudo mkdir /usr/share/unity/lenses/vbox
+  sudo cp vbox.lens /usr/share/unity/lenses/vbox/
+
+Then run the daemon with:
+
+  ./unity-lens-vbox.py
+
+And from another terminal restart Unity like this:
+
+  setsid unity
+
+[the setsid ^^ is a small trick to detach the unity process from the terminal
+ so you can close it if you want. A bit like 'unity &' just better ;-) ]
+
+Past this step you can freely Control-C the lens daemon to stop it,
+do some changes, and restart it. No need to restart Unity, it will find
+the newly started daemon automatically.
+
+Getting rid of the Lens
+-------------------------------
+Just remove the vbox.lens file. Fx, by issuing:
+
+  sudo rm /usr/share/unity/lenses/vbox/vbox.lens
+
+With that done, restart Unity once again with 'setsid unity' and all should
+be back to normal.
+

@@ -1,0 +1,12 @@
+[Lens]
+DBusName=net.launchpad.Unity.Lens.VBox
+DBusPath=/net/launchpad/unity/lens/vbox
+Name=VirtualBox
+Icon=virtualbox
+Description=VirtualBox VM Lens
+SearchHint=Search VirtualBox VMs
+Shortcut=v
+
+[Desktop Entry]
+X-Ubuntu-Gettext-Domain=unity-lens-vbox
+
