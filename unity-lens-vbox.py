@@ -12,7 +12,7 @@ from gi.repository import Dee
 #        it *before* we import the Unity module... ?!
 # _m = dir(Dee.SequenceModel)
 from gi.repository import Unity
-
+from subprocess import call, Popen
 
 import urllib
 
@@ -128,6 +128,7 @@ class UserScope:
     # Listen for changes and requests
     self._scope.connect ("notify::active-search", self._on_search_changed)
     self._scope.connect ("notify::active-global-search", self._on_global_search_changed)
+    self._scope.connect ("activate_uri", self._on_uri_activated);
 
     # This allows us to re-do the search if any parameter on a filter has changed
     # Though it's possible to connect to a more-specific changed signal on each
@@ -185,42 +186,25 @@ class UserScope:
     model.clear()
     
     # Get the list of documents
-    feed = self.get_vbox_list(search, is_global);
-    #    for entry in feed.entry:
-    #      model.append(entry.link[0].href,
-    #                   self.icon_for_type(entry.GetDocumentType()),
-    #                   0,
-    #                   "text/html",
-    #                   entry.title.text.encode("UTF-8"),
-    #                   entry.GetDocumentType(),
-    #                   entry.link[0].href);
-    for entry in feed:
-      uri = "http://www.google.com/?q=%s" % entry
-      model.append(uri,
-                   "x-office-spreadsheet",
-                   0,
-                   "text/html",
-                   entry,
-                   entry,
-                   uri);
+    vboxlist = self.get_vbox_list(search, is_global);
+    for entry in vboxlist:
+    	model.append("VBoxManage startvm %s" % entry['uuid'] ,
+                    "virtualbox",
+                    0,
+                    "application-x-desktop",
+                    entry['title'].encode("UTF-8"),
+                    "Start VM",
+                    "application://VBoxManage%20startvm%20FreeDos");
 
   # This is where we do the actual search for documents
   def get_vbox_list (self, search, is_global):
-    uri = "/feeds/default/private/full"
-
-    # We do not want filters to effect global results
-    #if not is_global:
-    #  uri = self.apply_filters(uri)
-  
-    #uri += "?showfolders=true"
-
-    #if search != None and search != "":
-    #  uri += "&q=" + urllib.quote_plus(search)
-
-    print "Searching for: " + uri;
-
-    #return self._client.GetDocList(uri)
-    return ["AA", "BB", "CC"]
+    # stdout_handle = Popen("VBoxManage list vms", shell=True, bufsize=1024, stdout=subprocess.PIPE).stdout
+    stdout_handle = os.popen("VBoxManage list vms", "r")
+    result = []
+    for line in  stdout_handle.readlines() :
+        [title, uuid] = line.rsplit(' ', 1)
+        result.append({'title':title, 'uuid': uuid})
+    return result
 
   def apply_filters (self, uri):
     # Try and grab a known filter and check whether or not it has an active
@@ -261,6 +245,11 @@ class UserScope:
       print "Unhandled icon type: ", doc_type
 
     return ret;
+
+  def _on_uri_activated (self, scope, uri):
+      print "on_uri_activated ", uri  
+      call (uri, shell=True)
+      return Unity.ActivationResponse.new(Unity.HandledType.HIDE_DASH, "/");
 
 if __name__ == "__main__":
   # NOTE: If we used the normal 'dbus' module for Python we'll get
