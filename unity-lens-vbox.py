@@ -203,7 +203,8 @@ class UserScope:
     result = []
     for line in  stdout_handle.readlines() :
         [title, uuid] = line.rsplit(' ', 1)
-        result.append({'title':title, 'uuid': uuid})
+        if not search or title.find(search.strip()) != -1 :
+          result.append({'title':title, 'uuid': uuid})
     return result
 
   def apply_filters (self, uri):
