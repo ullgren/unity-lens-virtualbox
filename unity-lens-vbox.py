@@ -12,9 +12,8 @@ from gi.repository import Dee
 #        it *before* we import the Unity module... ?!
 # _m = dir(Dee.SequenceModel)
 from gi.repository import Unity
-from subprocess import call, Popen
+from subprocess import call
 
-import urllib
 
 #
 # The primary bus name we grab *must* match what we specify in our .lens file
