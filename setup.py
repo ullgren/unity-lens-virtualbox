@@ -14,7 +14,6 @@ setup(name="unity-lens-vbox",
         ('share/unity/lenses/vbox', ['vbox.lens']),
         ('share/dbus-1/services', ['unity-lens-vbox.service']),
         ('lib/unity-lens-vbox', ['unity-lens-vbox.py']),
-        ('share/unity-lens-vbox', ['virtualbox.svg']),
     ])
 #cmdclass={"build":  build_extra.build_extra, })
 

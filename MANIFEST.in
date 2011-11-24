@@ -2,4 +2,3 @@ include README
 include MANIFEST.in MANIFEST
 include unity-lens-vbox.service
 include unity-lens-vbox.py
-include virtualbox.svg

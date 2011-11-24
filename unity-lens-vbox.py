@@ -1,6 +1,7 @@
 #! /usr/bin/python
 #
-# (C) Neil Jagdish Patel
+# (C) Pontus Ullgren
+# Original code (C) Neil Jagdish Patel
 #
 # GPLv3
 #
@@ -60,18 +61,9 @@ class Daemon:
     # ids (i.e. the scope may receive "forms"). If it receives None, then that
     # means the user hasn't selected anything.
     f = Unity.RadioOptionFilter.new("type", "Type", Gio.ThemedIcon.new(""), False)
-    f.add_option("running", "Running", None)
     f.add_option("all", "All", None)
-    #f.add_option ("form", "Forms", None)
-    #f.add_option ("presentation", "Presentations", None)
-    #f.add_option ("drawing", "Drawings", None)
-    #f.add_option ("pdf", "PDF Files", None)
-    #f.add_option ("folder", "Folders", None)
+    f.add_option("running", "Running", None)
     filters.append(f)
-
-    #f = Unity.RadioOptionFilter.new ("ownership", "Ownership", Gio.ThemedIcon.new(""), False)
-    #f.add_option ("mine", "Owned by me", None)
-    #filters.append(f)
 
     self._lens.props.filters = filters
 
@@ -90,40 +82,18 @@ class Daemon:
     #
     # The third, CategoryRenderer, argument allows you to hint to Unity how you
     # would like the results for that Category to be displayed.
-    cats.append(Unity.Category.new("Running",
-                                     Gio.ThemedIcon.new(icon_loc),
-                                     Unity.CategoryRenderer.VERTICAL_TILE))
-    cats.append(Unity.Category.new("Recently used",
-                                     Gio.ThemedIcon.new(icon_loc),
-                                     Unity.CategoryRenderer.VERTICAL_TILE))
     cats.append(Unity.Category.new("All",
                                      Gio.ThemedIcon.new(icon_loc),
                                      Unity.CategoryRenderer.VERTICAL_TILE))
-    #cats.append (Unity.Category.new ("Modified Earlier This Month",
-    #                                 Gio.ThemedIcon.new(icon_loc),
-    #                                 Unity.CategoryRenderer.VERTICAL_TILE))
-    #cats.append (Unity.Category.new ("Modified Earlier This Year",
-    #                                 Gio.ThemedIcon.new(icon_loc),
-    #                                 Unity.CategoryRenderer.VERTICAL_TILE))
-    #cats.append (Unity.Category.new ("Modified Long Ago",
-    #                                 Gio.ThemedIcon.new(icon_loc),
-    #                                 Unity.CategoryRenderer.VERTICAL_TILE))
+    cats.append(Unity.Category.new("Running",
+                                     Gio.ThemedIcon.new(icon_loc),
+                                     Unity.CategoryRenderer.VERTICAL_TILE))
     self._lens.props.categories = cats
 
 
 # Encapsulates searching a single user's GDocs
 class UserScope:
   def __init__(self):
-    # self._client = gdata.docs.client.DocsClient(source='njpatel-UnityLensGDocs-0.1')
-    # self._client.ssl = True
-    # self._client.http_client.debug = False
-
-    # We don't have a good way to ask for the username/password yet and I don't
-    # want everyone knowing my details so envvar it is :)
-    # self._client.ClientLogin("GDOC_USERNAME",
-    #                   "GDOC_PASSWORD",
-    #                   self._client.source);
-
     self._scope = Unity.Scope.new("/net/launchpad/unity/scope/vbox")
 
     # Listen for changes and requests
@@ -190,11 +160,11 @@ class UserScope:
     for entry in vboxlist:
         model.append("VBoxManage startvm %s" % entry['uuid'],
                     "virtualbox",
-                    0,
+                    2,
                     "application-x-desktop",
                     entry['title'].encode("UTF-8"),
-                    "Start VM",
-                    "application://VBoxManage%20startvm%20FreeDos")
+                    "All",
+                    "")
 
   # This is where we do the actual search for documents
   def get_vbox_list(self, search, is_global):
@@ -248,9 +218,8 @@ class UserScope:
     return ret
 
   def _on_uri_activated(self, scope, uri):
-      print "on_uri_activated ", uri
       call(uri, shell=True)
-      return Unity.ActivationResponse.new(Unity.HandledType.HIDE_DASH, "/")
+      return Unity.ActivationResponse.new(Unity.HandledType.HIDE_DASH)
 
 if __name__ == "__main__":
   # NOTE: If we used the normal 'dbus' module for Python we'll get
